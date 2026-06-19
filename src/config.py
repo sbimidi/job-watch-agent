@@ -103,3 +103,10 @@ ANTHROPIC_MODEL = "claude-sonnet-4-6"
 # Dedup storage
 # ---------------------------------------------------------------------------
 SEEN_JOBS_PATH = os.path.join(os.path.dirname(__file__), "..", "data", "seen_jobs.json")
+
+# Safety cap: max number of NEW jobs evaluated in a single run. Prevents
+# runaway run times (e.g. first-ever run with a large backlog, or an Adzuna
+# search returning unusually many results). Any jobs beyond this cap are
+# left unmarked (not added to seen_jobs.json) so they'll simply be picked
+# up and evaluated on the next scheduled run instead.
+MAX_JOBS_PER_RUN = 40
