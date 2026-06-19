@@ -7,8 +7,13 @@ resume is a good fit.
 import json
 import os
 import re
+import time
 import anthropic
 import config
+
+# Retry settings for transient Anthropic API errors (529 overloaded, etc.)
+MAX_RETRIES = 4
+RETRY_BASE_DELAY_SECONDS = 5  # doubles each retry: 5s, 10s, 20s, 40s
 
 
 def _load_resumes():
@@ -93,6 +98,30 @@ def _extract_json(text):
     return json.loads(text)
 
 
+def _call_claude_with_retry(client, **kwargs):
+    """
+    Wraps client.messages.create() with retry + exponential backoff for
+    transient errors (529 overloaded, rate limits, connection errors).
+    Raises the final exception if all retries are exhausted.
+    """
+    last_error = None
+    for attempt in range(MAX_RETRIES):
+        try:
+            return client.messages.create(**kwargs)
+        except (anthropic.InternalServerError, anthropic.RateLimitError,
+                anthropic.APIConnectionError) as e:
+            last_error = e
+            delay = RETRY_BASE_DELAY_SECONDS * (2 ** attempt)
+            print(f"[claude] transient error ({type(e).__name__}), "
+                  f"retry {attempt + 1}/{MAX_RETRIES} in {delay}s: {e}")
+            time.sleep(delay)
+        except Exception as e:
+            # Non-transient error (bad request, auth failure, etc.) - don't retry
+            raise
+    # All retries exhausted
+    raise last_error
+
+
 def check_eligibility(job, client):
     """
     Hard pre-filter: returns (is_eligible: bool, reason: str).
@@ -110,7 +139,8 @@ Description:
 """
 
     try:
-        response = client.messages.create(
+        response = _call_claude_with_retry(
+            client,
             model=config.ANTHROPIC_MODEL,
             max_tokens=200,
             system=ELIGIBILITY_SYSTEM_PROMPT,
@@ -121,8 +151,8 @@ Description:
         )
         parsed = _extract_json(raw_text)
     except Exception as e:
-        print(f"[eligibility] check failed, defaulting to eligible: {e}")
-        return True, "eligibility check failed, defaulted to eligible"
+        print(f"[eligibility] check failed after retries, SKIPPING job (fail-safe): {e}")
+        return False, f"eligibility check failed after retries: {e}"
 
     if config.REQUIRE_VISA_FRIENDLY and parsed.get("citizenship_blocker"):
         return False, parsed.get("reason", "citizenship/sponsorship blocker")
@@ -147,7 +177,8 @@ CANDIDATE RESUME ({resume['label']}):
 {resume['text'][:6000]}
 """
 
-    response = client.messages.create(
+    response = _call_claude_with_retry(
+        client,
         model=config.ANTHROPIC_MODEL,
         max_tokens=500,
         system=SYSTEM_PROMPT,
@@ -179,27 +210,46 @@ def best_match_for_job(job):
     If the job fails eligibility, returns None immediately (no scoring done,
     saves API calls). Otherwise scores `job` against all configured resumes,
     returns the best result dict, or None if none could be scored.
+
+    Returns a tuple: (result_dict_or_None, should_mark_seen: bool)
+    should_mark_seen is False only when a persistent API failure occurred,
+    so the job gets retried on the next run instead of being permanently
+    skipped due to a transient outage.
     """
     client = anthropic.Anthropic(api_key=config.ANTHROPIC_API_KEY)
 
     is_eligible, reason = check_eligibility(job, client)
     if not is_eligible:
+        if "failed after retries" in reason:
+            # API outage during eligibility check - don't burn this job, retry later
+            print(f"[score] '{job['title']}' @ {job['company']} -> eligibility check "
+                  f"failed after retries, will retry next run")
+            return None, False
         print(f"[score] SKIPPED (ineligible): '{job['title']}' @ {job['company']} -> {reason}")
-        return None
+        return None, True
 
     resumes = get_resumes()
     if not resumes:
         print("[score] no resumes loaded, skipping")
-        return None
+        return None, True
 
     results = []
+    had_failure = False
     for resume in resumes:
-        result = score_job_against_resume(job, resume, client)
-        if result:
-            results.append(result)
+        try:
+            result = score_job_against_resume(job, resume, client)
+            if result:
+                results.append(result)
+        except Exception as e:
+            print(f"[score] scoring failed after retries for resume "
+                  f"'{resume['label']}' on '{job['title']}': {e}")
+            had_failure = True
 
     if not results:
-        return None
+        if had_failure:
+            # all scoring attempts hit persistent API errors - retry next run
+            return None, False
+        return None, True
 
     best = max(results, key=lambda r: r["match_score"])
-    return best
+    return best, True

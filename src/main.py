@@ -25,13 +25,34 @@ def main():
     all_jobs = fetch_all_jobs()
 
     new_jobs = [j for j in all_jobs if j["id"] not in seen_ids]
-    print(f"[main] {len(new_jobs)} new jobs to evaluate (out of {len(all_jobs)} fetched)")
+    print(f"[main] {len(new_jobs)} new jobs found (out of {len(all_jobs)} fetched)")
+
+    if len(new_jobs) > config.MAX_JOBS_PER_RUN:
+        print(
+            f"[main] capping this run to {config.MAX_JOBS_PER_RUN} jobs "
+            f"(remaining {len(new_jobs) - config.MAX_JOBS_PER_RUN} will be "
+            f"picked up on a future run)"
+        )
+        new_jobs = new_jobs[:config.MAX_JOBS_PER_RUN]
+
+    print(f"[main] evaluating {len(new_jobs)} job(s) this run")
 
     notified_count = 0
+    skipped_for_retry = 0
 
     for job in new_jobs:
-        match = best_match_for_job(job)
-        seen_ids.add(job["id"])  # mark seen regardless of score, avoid re-scoring
+        try:
+            match, should_mark_seen = best_match_for_job(job)
+        except Exception as e:
+            print(f"[main] unexpected error scoring '{job['title']}' @ {job['company']}: {e}")
+            print(f"[main] will retry this job next run")
+            skipped_for_retry += 1
+            continue
+
+        if should_mark_seen:
+            seen_ids.add(job["id"])
+        else:
+            skipped_for_retry += 1
 
         if not match:
             continue
@@ -48,7 +69,8 @@ def main():
 
     save_seen_jobs(seen_ids)
 
-    print(f"=== Run complete. {notified_count} notification(s) sent. ===")
+    print(f"=== Run complete. {notified_count} notification(s) sent. "
+          f"{skipped_for_retry} job(s) deferred to next run due to API issues. ===")
 
 
 if __name__ == "__main__":
