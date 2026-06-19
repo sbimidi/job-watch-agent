@@ -24,7 +24,7 @@ RESUMES = [
 # Matching
 # ---------------------------------------------------------------------------
 # Minimum score (0-100) required before a WhatsApp notification fires.
-MATCH_SCORE_THRESHOLD = 85
+MATCH_SCORE_THRESHOLD = 70
 
 # ---------------------------------------------------------------------------
 # Eligibility filters (hard filters, checked BEFORE detailed scoring)
