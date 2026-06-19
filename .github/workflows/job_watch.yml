@@ -1,0 +1,42 @@
+name: Job Watch Agent
+
+on:
+  schedule:
+    # Runs every 30 minutes. GitHub may delay this slightly under load.
+    - cron: "*/30 * * * *"
+  workflow_dispatch: {}  # allows manual "Run workflow" trigger from the Actions tab
+
+permissions:
+  contents: write  # needed to commit updated seen_jobs.json back to the repo
+
+jobs:
+  run-agent:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run job watch agent
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          ADZUNA_APP_ID: ${{ secrets.ADZUNA_APP_ID }}
+          ADZUNA_APP_KEY: ${{ secrets.ADZUNA_APP_KEY }}
+          CALLMEBOT_PHONE: ${{ secrets.CALLMEBOT_PHONE }}
+          CALLMEBOT_APIKEY: ${{ secrets.CALLMEBOT_APIKEY }}
+        run: python src/main.py
+
+      - name: Commit updated seen_jobs.json
+        run: |
+          git config user.name "job-watch-bot"
+          git config user.email "actions@github.com"
+          git add data/seen_jobs.json
+          git diff --staged --quiet || git commit -m "Update seen jobs [skip ci]"
+          git push

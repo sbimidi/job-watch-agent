@@ -1,0 +1,53 @@
+SANDEEP REDDY BIMIDI
+Software Engineer · Full-Stack · AI/ML · Cloud & Distributed Systems
+sandeepbimidi14@gmail.com | +1 (602) 756-7406 | Phoenix, AZ | linkedin.com/in/-sandeep-reddy | github.com/sandeepbimidi
+
+TECHNICAL SKILLS
+Languages: Java, Python, TypeScript, JavaScript, C++, Golang, C#, Swift, Bash
+AI / ML: PyTorch, TensorFlow, Scikit-learn, Hugging Face Transformers, LangChain, LangGraph, OpenAI API, RAG, NLP, LLMs, BERT, GPT-4
+Frontend: React.js, React Native, Angular, Vue.js, Next.js, HTML5, CSS3
+Backend: Spring Boot, Node.js, Express.js, Django REST, FastAPI, Flask, gRPC, GraphQL, REST APIs
+Databases: PostgreSQL, MongoDB, MySQL, Redis, Firestore, Pinecone (Vector DB)
+Cloud & DevOps: AWS (EC2, S3, Lambda, SageMaker), GCP, Docker, Kubernetes, Kafka, CI/CD, GitHub Actions
+Tools: Git, GitHub, VSCode, IntelliJ, Postman, Linux, Agile / Scrum
+
+EXPERIENCE
+
+Backend Developer | BMR Pvt. Ltd | May 2025 – Aug 2025 · Remote
+- Architected and deployed a full-stack portfolio platform using React, Spring Boot (Java), and AWS (EC2 + S3), improving client acquisition efficiency and digital presence.
+- Built event-driven client management pipelines with MongoDB and Kafka message queues, enabling real-time scheduling, tracking, and automated status notifications.
+- Developed an inventory control module that reduced data-entry errors by 20% and streamlined product monitoring workflows across cross-functional teams.
+- Containerized the full application stack with Docker and deployed on AWS, achieving zero-downtime deployments and horizontal scalability.
+
+Software Engineer Intern | Omega Pediatrics | Aug 2024 – Dec 2024 · Remote
+- Delivered a consumer-facing full-stack platform using React Native, Java (Spring Boot), MongoDB, and Python, enabling pediatric patients to book appointments and track health metrics.
+- Optimized Java Spring Boot REST APIs and database query patterns, reducing server response time by 40% and improving data retrieval speed by 30%.
+- Integrated PyTorch-based predictive health models into the backend pipeline, increasing user satisfaction scores by 25% and reducing system downtime by 15%.
+- Collaborated in a 5-person Agile team using GitHub and weekly sprints, delivering all features on schedule across a 4-month engagement.
+
+PROJECTS
+
+LLM-Powered Code Review Agent | Java · Python · LangChain · LangGraph · OpenAI GPT-4 · Spring Boot · Pinecone · GitHub Actions
+- Built an autonomous AI agent using LangChain and GPT-4 that analyzes GitHub pull requests, detects bugs, suggests refactors, and auto-generates summary review comments.
+- Implemented a Retrieval-Augmented Generation (RAG) pipeline with Pinecone vector DB, giving the agent persistent memory of project-specific coding standards across sessions.
+- Deployed as a Spring Boot microservice triggered via GitHub Actions CI/CD, reducing manual PR review time by ~60% in test environments.
+- Added a React.js dashboard to visualize agent activity, review history, and code quality trends over time.
+
+SmartRecruit AI | React.js · Java · Spring Boot · Hugging Face (BERT) · PostgreSQL · Redis · Docker · AWS EC2
+- Developed an end-to-end AI recruiting platform that parses resumes with Hugging Face BERT transformer models and ranks candidates against job descriptions using cosine similarity.
+- Built Java Spring Boot async REST endpoints that reduced per-candidate resume screening throughput to under 2 seconds.
+- Designed PostgreSQL schema for candidate profiles, embeddings, and match scores; added Redis caching to eliminate redundant inference calls.
+- Containerized with Docker, deployed on AWS EC2, and built an interactive React.js recruiter dashboard with filtering, ranking, and CSV export.
+
+TaskNest | React.js · Java · Spring Boot · WebSockets · Redis · PostgreSQL · Docker · Kubernetes
+- Built a Trello-style Kanban task manager supporting real-time drag-and-drop updates via WebSockets and Redis pub/sub for multi-user synchronization.
+- Implemented role-based access control (Admin, Developer, Viewer) using Firebase Authentication and JWT-secured REST APIs.
+- Deployed with Docker and Kubernetes on AWS/GCP, enabling auto-scaling and achieving 99.9% uptime in load testing.
+
+MediMind AI | React.js · Java · Spring Boot · TensorFlow · PyTorch · AWS EC2/S3
+- Engineered a full-stack AI health assistant with symptom-to-diagnosis inference using Java (Spring Boot) backend and TensorFlow/PyTorch models with NLP APIs for real-time health recommendations.
+- Deployed on AWS (EC2, S3) with Docker; implemented secure patient history file storage and containerized all ML inference services for reproducibility.
+
+EDUCATION
+M.S., Computer Science · Arizona State University · Jan 2025 – Dec 2025 · GPA: 3.8 / 4.0
+B.S., Computer Science · Arizona State University · Jan 2021 – Dec 2024 · GPA: 3.7 / 4.0
