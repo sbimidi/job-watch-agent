@@ -10,11 +10,23 @@ Each fetcher returns a list of normalized job dicts:
     "description": str,
     "url": str,
     "source": "greenhouse" | "lever" | "adzuna",
+    "posted_at": datetime or None,
 }
 """
 
+from datetime import datetime, timezone, timedelta
 import requests
 import config
+
+
+def _parse_adzuna_date(date_str):
+    """Adzuna 'created' field looks like '2026-06-18T14:32:10Z'."""
+    if not date_str:
+        return None
+    try:
+        return datetime.strptime(date_str, "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=timezone.utc)
+    except (ValueError, TypeError):
+        return None
 
 
 def fetch_greenhouse_jobs():
@@ -38,6 +50,7 @@ def fetch_greenhouse_jobs():
                 "description": job.get("content", ""),
                 "url": job.get("absolute_url", ""),
                 "source": "greenhouse",
+                "posted_at": None,  # Greenhouse doesn't expose a reliable post date via this endpoint
             })
     return jobs
 
@@ -63,6 +76,7 @@ def fetch_lever_jobs():
                 "description": job.get("descriptionPlain", "") or job.get("description", ""),
                 "url": job.get("hostedUrl", ""),
                 "source": "lever",
+                "posted_at": None,  # not used for age filtering; Greenhouse/Lever currently unused anyway
             })
     return jobs
 
@@ -72,7 +86,11 @@ def fetch_adzuna_jobs():
         print("[adzuna] skipped: no API credentials set")
         return []
 
+    cutoff = datetime.now(timezone.utc) - timedelta(hours=config.MAX_JOB_AGE_HOURS)
+
     jobs = []
+    filtered_old_count = 0
+
     for keyword in config.ADZUNA_KEYWORDS:
         for location in config.ADZUNA_LOCATIONS:
             url = f"https://api.adzuna.com/v1/api/jobs/{config.ADZUNA_COUNTRY}/search/1"
@@ -82,6 +100,8 @@ def fetch_adzuna_jobs():
                 "what": keyword,
                 "results_per_page": config.ADZUNA_RESULTS_PER_PAGE,
                 "content-type": "application/json",
+                "sort_by": "date",  # newest first, so age cutoff trims efficiently
+                "max_days_old": 2,  # coarse pre-filter; precise cutoff applied below
             }
             if location:
                 params["where"] = location
@@ -96,6 +116,13 @@ def fetch_adzuna_jobs():
                 continue
 
             for job in data.get("results", []):
+                posted_at = _parse_adzuna_date(job.get("created"))
+
+                # Skip jobs we can't date, or that are older than the cutoff
+                if posted_at is None or posted_at < cutoff:
+                    filtered_old_count += 1
+                    continue
+
                 jobs.append({
                     "id": f"adzuna:{job['id']}",
                     "title": job.get("title", ""),
@@ -104,6 +131,7 @@ def fetch_adzuna_jobs():
                     "description": job.get("description", ""),
                     "url": job.get("redirect_url", ""),
                     "source": "adzuna",
+                    "posted_at": posted_at,
                 })
 
     # dedupe across the multiple keyword/location combinations
@@ -113,6 +141,9 @@ def fetch_adzuna_jobs():
         if job["id"] not in seen:
             seen.add(job["id"])
             deduped.append(job)
+
+    print(f"[adzuna] {len(deduped)} jobs within last {config.MAX_JOB_AGE_HOURS}h "
+          f"({filtered_old_count} older jobs filtered out)")
 
     return deduped
 

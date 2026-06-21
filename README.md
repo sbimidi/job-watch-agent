@@ -1,17 +1,18 @@
 # Job Watch Agent
 
-Automatically scans job postings (via Adzuna, covering Phoenix + nationwide/remote),
-scores each posting against your 2 resumes using Claude, hard-filters out
-jobs requiring US citizenship/no-sponsorship or 3+ years of experience, and
-sends you a WhatsApp message (via CallMeBot) for any remaining job scoring
-**85+/100** match.
+Automatically scans job postings (via Adzuna, covering Arizona, California,
+and remote-tagged US postings), filters to only jobs posted within the last
+24 hours, scores each posting against your 2 resumes using Claude,
+hard-filters out jobs requiring US citizenship/no-sponsorship or 3+ years
+of experience, and sends you a WhatsApp message (via CallMeBot) for any
+remaining job scoring **75+/100** match.
 
 > **Note on "match score":** No system can give a true probability of
 > landing an interview — that depends on factors outside any resume/job
 > description comparison (recruiter judgment, applicant volume, internal
 > referrals, etc). What this agent gives you is an honest, LLM-evaluated
 > **fit score** based on skills, seniority, and requirements overlap. Treat
-> 85+ as "strong enough to prioritize applying immediately," not a guarantee.
+> 75+ as "strong enough to prioritize applying immediately," not a guarantee.
 
 > **Eligibility filters:** Configured for an OPT/F-1 candidate seeking
 > entry-level roles (0-2 years). Jobs explicitly requiring US citizenship,
@@ -19,10 +20,19 @@ sends you a WhatsApp message (via CallMeBot) for any remaining job scoring
 > auto-skipped before scoring even runs — see `REQUIRE_VISA_FRIENDLY` and
 > `MAX_YEARS_EXPERIENCE_REQUIRED` in `src/config.py`.
 
+> **Location & recency:** Searches are scoped to Arizona, California, and
+> "Remote"-tagged postings (`ADZUNA_LOCATIONS` in `src/config.py`). Note
+> Adzuna doesn't have a true remote-work flag — "Remote" as a location
+> string only catches postings where the employer wrote "Remote" in the
+> location field, which is common but not exhaustive. Jobs older than
+> `MAX_JOB_AGE_HOURS` (default 24) are filtered out using Adzuna's
+> `created` timestamp before eligibility/scoring even runs.
+
 > **Job sources:** Currently Adzuna only (free API, broad legitimate
 > coverage). Greenhouse/Lever company-board support is built in and ready
 > to use — just add verified company slugs to `GREENHOUSE_COMPANIES` /
-> `LEVER_COMPANIES` in `src/config.py` anytime. LinkedIn and Indeed are
+> `LEVER_COMPANIES` in `src/config.py` anytime (note: posted-date filtering
+> currently only applies to Adzuna results). LinkedIn and Indeed are
 > intentionally NOT included: neither offers a public API for individual
 > developers, and scraping either risks violating their ToS and getting
 > your personal LinkedIn account flagged or banned.
@@ -39,7 +49,7 @@ pip install -r requirements.txt
 ### 1.2 Add your resumes
 Replace the placeholder files in `data/resumes/` with your real resume text:
 - `data/resumes/fullstack_resume.txt` (Full-Stack / SWE)
-- `data/resumes/aiml_resume.txt` (AI/ML Engineer)
+- `data/resumes/distributed_systems_resume.txt` (Distributed Systems / Backend)
 
 (Plain text is fine — copy-paste from your Word doc / PDF.)
 

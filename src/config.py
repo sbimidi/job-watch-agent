@@ -17,14 +17,14 @@ RESUME_DIR = os.path.join(os.path.dirname(__file__), "..", "data", "resumes")
 
 RESUMES = [
     {"id": "fullstack", "label": "Full-Stack / SWE Resume", "file": "fullstack_resume.txt"},
-    {"id": "aiml", "label": "AI/ML Engineer Resume", "file": "aiml_resume.txt"},
+    {"id": "distributed", "label": "Distributed Systems / Backend Resume", "file": "distributed_systems_resume.txt"},
 ]
 
 # ---------------------------------------------------------------------------
 # Matching
 # ---------------------------------------------------------------------------
 # Minimum score (0-100) required before a WhatsApp notification fires.
-MATCH_SCORE_THRESHOLD = 70
+MATCH_SCORE_THRESHOLD = 75
 
 # ---------------------------------------------------------------------------
 # Eligibility filters (hard filters, checked BEFORE detailed scoring)
@@ -37,6 +37,18 @@ REQUIRE_VISA_FRIENDLY = True
 # Only consider entry-level roles. Jobs explicitly requiring 3+ years of
 # experience are auto-rejected regardless of match score.
 MAX_YEARS_EXPERIENCE_REQUIRED = 2
+
+# Safety cap: max number of NEW jobs evaluated in a single run. Prevents
+# runaway run times (e.g. first-ever run with a large backlog, or an Adzuna
+# search returning unusually many results). Any jobs beyond this cap are
+# left unmarked (not added to seen_jobs.json) so they'll simply be picked
+# up and evaluated on the next scheduled run instead.
+MAX_JOBS_PER_RUN = 40
+
+# Only consider jobs posted within this many hours. Adzuna provides a
+# "created" timestamp per listing; jobs older than this are filtered out
+# before eligibility/scoring even runs (saves API calls + keeps alerts fresh).
+MAX_JOB_AGE_HOURS = 24
 
 # ---------------------------------------------------------------------------
 # Job sources: Greenhouse / Lever company board slugs (OPTIONAL)
@@ -82,8 +94,9 @@ ADZUNA_KEYWORDS = [
 ]
 
 ADZUNA_LOCATIONS = [
-    "Phoenix, AZ",
-    "",  # empty = nationwide search, surfaces remote + broad US postings
+    "Arizona",
+    "California",
+    "Remote",
 ]
 ADZUNA_RESULTS_PER_PAGE = 20
 
@@ -103,10 +116,3 @@ ANTHROPIC_MODEL = "claude-sonnet-4-6"
 # Dedup storage
 # ---------------------------------------------------------------------------
 SEEN_JOBS_PATH = os.path.join(os.path.dirname(__file__), "..", "data", "seen_jobs.json")
-
-# Safety cap: max number of NEW jobs evaluated in a single run. Prevents
-# runaway run times (e.g. first-ever run with a large backlog, or an Adzuna
-# search returning unusually many results). Any jobs beyond this cap are
-# left unmarked (not added to seen_jobs.json) so they'll simply be picked
-# up and evaluated on the next scheduled run instead.
-MAX_JOBS_PER_RUN = 40

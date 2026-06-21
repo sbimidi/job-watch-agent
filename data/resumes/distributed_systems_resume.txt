@@ -1,0 +1,40 @@
+Sandeep Reddy Bimidi
+Software Engineer · Distributed Systems · Backend · AI/ML
+sandeepbimidi14@gmail.com | +1 (602) 756-7406 | Phoenix, AZ | linkedin.com/in/-sandeep-reddy | github.com/sandeepbimidi
+
+EXPERIENCE
+
+Backend Developer | BMR Pvt. Ltd | May 2025 – Aug 2025 · Remote
+- Architected and deployed a full-stack platform on React, Spring Boot (Java), and AWS (EC2 + S3), applying clean service boundaries and RESTful API design to support a growing user base with high availability.
+- Built event-driven, geographically-aware client management pipelines using MongoDB and Kafka message queues, enabling real-time scheduling, status tracking, and automated notifications across distributed services.
+- Developed an inventory control module that reduced data-entry errors by 20% and streamlined cross-team monitoring workflows through structured validation and asynchronous processing.
+- Containerized the full application stack with Docker and deployed to AWS, achieving zero-downtime rolling deployments and horizontal scalability under variable load.
+
+Software Engineer Intern | Omega Pediatrics | Aug 2024 – Dec 2024 · Remote
+- Delivered a consumer-facing full-stack platform using React Native, Java (Spring Boot), MongoDB, and Python, supporting real-time appointment booking and health metric tracking for end users.
+- Optimized Java Spring Boot REST APIs and underlying database query patterns, reducing server response time by 40% and improving data retrieval throughput by 30% under concurrent load.
+- Integrated PyTorch-based predictive health models directly into the backend service pipeline, increasing user satisfaction scores by 25% while reducing system downtime by 15%.
+- Collaborated within a 5-person Agile team using GitHub and weekly sprints, consistently shipping reliable, production-ready features on schedule across a 4-month engagement.
+
+PROJECTS
+
+TaskNest | React.js · Java · Spring Boot · WebSockets · Redis · PostgreSQL · Docker · Kubernetes
+- Built a real-time, multi-user Kanban task manager using WebSockets and Redis pub/sub to keep distributed clients synchronized with low-latency updates under concurrent edits.
+- Deployed with Docker and Kubernetes across AWS/GCP, configuring auto-scaling and load balancing to sustain 99.9% uptime in load testing while handling traffic spikes gracefully.
+
+LLM-Powered Code Review Agent | Java · Python · LangChain · GPT-4 · Spring Boot · Pinecone · GitHub Actions
+- Built an autonomous AI agent with LangChain and GPT-4 that analyzes pull requests, detects bugs, and auto-generates review comments, deployed as a Spring Boot microservice triggered via GitHub Actions CI/CD.
+- Implemented a Retrieval-Augmented Generation (RAG) pipeline using a Pinecone vector database to give the agent persistent, project-specific memory, cutting manual PR review time by roughly 60% in test environments.
+
+SmartRecruit AI | React.js · Java · Spring Boot · Hugging Face (BERT) · PostgreSQL · Redis · AWS EC2
+- Built Java Spring Boot async REST endpoints backed by Redis caching, reducing per-candidate resume screening throughput to under 2 seconds at scale while parsing resumes with Hugging Face BERT models.
+
+TECHNICAL SKILLS
+Languages: Java, Python, Go, C++, C#, TypeScript, JavaScript, Bash
+Tools: Docker, Kubernetes, Kafka, AWS (EC2, S3, Lambda), GCP, Git, GitHub Actions, CI/CD, Postman, Linux
+Skills: Distributed Systems, Microservices, REST/gRPC/GraphQL APIs, IP Networking Fundamentals, Spring Boot, React.js, Node.js, WebSockets, PostgreSQL, MongoDB, Redis, LangChain, RAG, LLMs, NLP
+Certifications: Generative AI, ChatGPT 5, Copilot & AI Agents Mastery 2026 (Udemy); Design Patterns in C# and .NET (Udemy); ArcGIS Desktop (ArcMap) Customization using C# & ArcObjects (Udemy)
+
+EDUCATION
+M.S., Computer Science · Arizona State University · Jan 2025 – Dec 2025 · GPA: 3.8 / 4.0
+B.S., Computer Science · Arizona State University · Jan 2021 – Dec 2024 · GPA: 3.7 / 4.0
